@@ -10,6 +10,7 @@ export class AppStore {
   @observable showUpload = '';
   @observable audioSentence = '';
   @observable audioSentenceTranslation = '';
+  @observable audioFile = {};
 }
 
 export default new AppStore;

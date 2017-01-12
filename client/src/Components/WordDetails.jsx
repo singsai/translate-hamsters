@@ -139,20 +139,30 @@ export default class WordDetails extends React.Component {
       $('#record-audio').html("<audio controls=''><source src=" + URL.createObjectURL(blob) + "></source></audio>");
 
       var url = (window.URL || window.webkitURL).createObjectURL(blob);
-      var link = document.getElementById("save");
-      link.href = url;
-      link.download = 'output.wav';
+      var tempFileName = `${Date.now()}.wav`;
+      // var link = document.getElementById("save");
+
+      // link.href = url;
+      // link.download = tempFileName;
+
       // link.download = filename || 'output.wav';
       // console.log('onMediaSuccess THIS:', this);
 
       // var file =
       // url.lastModifiedDate = new Date();
       // url.name = link.download;
-      var file = new File([blob], "fileName");
-      console.log('file:', file);
 
-      // console.log('url: ', url);
-      this.onDrop(blob);
+      var file = new File([blob], tempFileName);
+      this.store.audioFile = file;
+      console.log('file:', file);
+      // var bucket1 = sig.urlSigner(Config['S3KEY'], Config['S3SECRET']);
+      // var url1 = bucket1.getUrl('GET', tempFileName, '00hamsters', 10); //url expires in 10 minutes
+      // var putUrl = sig.urlSigner(Config['S3KEY'], Config['S3SECRET'], {
+      //   host: 's3.amazonaws.com',
+      // }).getUrl('PUT', tempFileName, '00hamsters', 100);
+      // console.log(putUrl);
+
+      // this.onDrop(blob);
     }.bind(this);
 
     var timeInterval = 360 * 1000;
@@ -160,6 +170,23 @@ export default class WordDetails extends React.Component {
     mediaRecorder.start(timeInterval);
 
     // $('#stop-recording').disabled = false;
+  }
+
+  uploadAudioFile() {
+    var formData = new FormData();
+    formData.append('audiofile', this.store.audioFile);
+    formData.append('Content-Type', 'multipart/form-data');
+
+    $.ajax({
+      url: '/upload',
+      method: 'POST',
+      data: formData,
+      processData: false,  // tell jQuery not to convert to form data
+      contentType: false,  // tell jQuery not to set contentType
+      success: function(response) {
+        console.log(response);
+      }.bind(this)
+    });
   }
 
   onMediaError(e) {
@@ -187,8 +214,8 @@ export default class WordDetails extends React.Component {
         <button onClick={this.handleClick.bind(this)}>Hear translated audio</button>
         <br/>
         <button onClick={this.startRecording.bind(this)}>Record</button>
-        <button onClick={this.stopRecording.bind(this)}>STOP</button>
-        <a href="#" id="save">save</a>
+        <button onClick={this.stopRecording.bind(this)}>Stop</button>
+        <button onClick={this.uploadAudioFile.bind(this)}>Upload</button>
         <div id="record-audio"></div>
         <br/>
         <br/>

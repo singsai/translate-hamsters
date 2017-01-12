@@ -7,6 +7,8 @@ const router = require('./router');
 var handler = require('./request-handler');
 var session = require('express-session');
 
+
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -24,6 +26,8 @@ app.get('/api/words/:username', handler.getWords);
 // router.route('/api/')
 // app.use('/api', router);
 // app.get('/api/words', handler.what);
+app.post('/upload', handler.uploadAudio);
+
 app.get('*', function (req, res) {
   res.sendFile(path.resolve(__dirname, '../client', 'index.html'));
 });
