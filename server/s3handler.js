@@ -1,27 +1,27 @@
 const aws = require('aws-sdk'),
       multer = require('multer'),
       multerS3 = require('multer-s3'),
-      Config = require('./config.js');
+      Config = require('../client/env/config.js');
 
 const s3 = new aws.S3({
   accessKeyId: Config["S3KEY"],
   secretAccessKey: Config["S3SECRET"],
-  region: "us-west-2",
+  region: Config["S3REGION"],
 });
 
-const upload = multer({
+upload = multer({
     storage: multerS3({
         s3: s3,
-        bucket: '00hamsters',
+        bucket: Config["S3BUCKET"],
         key: function (req, file, cb) {
             console.log(file);
-            cb(null, file.originalname); //use Date.now() for unique file keys
+            cb(null, file.originalname);
+            //use Date.now() for unique file keys
         }
     })
 }).single('audiofile');
 
-app.post('/upload', function(req, res) {
-  console.log('attemtping');
+exports.uploadAudio = (req, res) => {
   upload(req, res, function(err) {
     if (err) {
       console.error(err);
@@ -30,4 +30,4 @@ app.post('/upload', function(req, res) {
       res.json(req.file);
     }
   })
-});
+};

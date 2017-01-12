@@ -178,7 +178,7 @@ export default class WordDetails extends React.Component {
     formData.append('Content-Type', 'multipart/form-data');
 
     $.ajax({
-      url: '/upload',
+      url: '/api/upload',
       method: 'POST',
       data: formData,
       processData: false,  // tell jQuery not to convert to form data

@@ -2,12 +2,11 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const db = require('./db/dbconfig');
-// const Word = require('./db/models/word');
+
 const router = require('./router');
-var handler = require('./request-handler');
-var session = require('express-session');
-
-
+const handler = require('./request-handler');
+const session = require('express-session');
+const s3Handler = require('./s3handler');
 
 const app = express();
 
@@ -23,10 +22,8 @@ app.post('/api/sentences', handler.createSentence);
 app.get('/api/sentences/:word', handler.listSentences);
 app.post('/api/words', handler.addWord);
 app.get('/api/words/:username', handler.getWords);
-// router.route('/api/')
-// app.use('/api', router);
-// app.get('/api/words', handler.what);
-app.post('/upload', handler.uploadAudio);
+
+app.post('/api/upload', s3Handler.uploadAudio);
 
 app.get('*', function (req, res) {
   res.sendFile(path.resolve(__dirname, '../client', 'index.html'));
